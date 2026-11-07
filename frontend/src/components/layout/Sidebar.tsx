@@ -1,9 +1,8 @@
 import { NavLink } from 'react-router-dom';
-import { Search, LayoutDashboard, History, Database, Info, ShieldAlert } from 'lucide-react';
+import { Search, History, Database, Info, ShieldAlert } from 'lucide-react';
 
 const navItems = [
   { path: '/analyze', label: 'Analyze Profile', icon: Search },
-  { path: '/', label: 'Dashboard', icon: LayoutDashboard }, // Based on the UI, Dashboard might link to home or a separate dashboard. Using / for now.
   { path: '/history', label: 'History', icon: History },
   { path: '/dataset', label: 'Dataset Info', icon: Database },
   { path: '/about', label: 'About Project', icon: Info },

@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Sparkles, ArrowRight, ShieldCheck, Database, Server, Layout, Search, BrainCircuit } from 'lucide-react';
+import { ArrowRight, ShieldCheck, Database, Server, Layout, Search, BrainCircuit } from 'lucide-react';
 import { ThemeToggle } from '../components/common/ThemeToggle';
 
 export default function HomePage() {
@@ -23,10 +23,6 @@ export default function HomePage() {
         
         {/* Hero Section */}
         <section className="py-20 text-center flex flex-col items-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 font-semibold text-sm mb-6 border border-primary-100 dark:border-primary-800">
-            <Sparkles size={16} />
-            <span>AI-Powered Detection</span>
-          </div>
           
           <h1 className="text-5xl md:text-6xl font-black text-slate-800 dark:text-white tracking-tight mb-6 max-w-3xl leading-tight">
             Identify Fake Instagram Profiles with Machine Learning

@@ -1,11 +1,31 @@
+import { useEffect, useState } from 'react';
 import { AppLayout } from '../components/layout/AppLayout';
 import { Topbar } from '../components/layout/Topbar';
-import { History, Search } from 'lucide-react';
-import { mockHistory } from '../data/mockData';
+import { History, Search, AlertCircle, Loader2 } from 'lucide-react';
 import { DemoDataBadge } from '../components/common/DemoDataBadge';
 import { RiskBadge } from '../components/common/RiskBadge';
+import { getHistory } from '../services/predictionService';
+import type { HistoryItem } from '../types';
 
 export default function HistoryPage() {
+  const [history, setHistory] = useState<HistoryItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchHistory = async () => {
+      try {
+        const data = await getHistory();
+        setHistory(data);
+      } catch (error: any) {
+        setErrorMsg(error.message || "An unexpected error occurred.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchHistory();
+  }, []);
+
   return (
     <AppLayout>
       <Topbar 
@@ -20,8 +40,20 @@ export default function HistoryPage() {
           <DemoDataBadge />
         </div>
 
+        {errorMsg && (
+          <div className="mb-6 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-300 p-4 rounded-xl flex items-center gap-3">
+            <AlertCircle size={20} />
+            <p>{errorMsg}</p>
+          </div>
+        )}
+
         <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
-          {mockHistory.length > 0 ? (
+          {isLoading ? (
+            <div className="flex flex-col items-center justify-center h-64 text-slate-400 dark:text-slate-500">
+              <Loader2 size={48} className="mb-4 animate-spin text-primary-500 opacity-80" />
+              <p>Loading history...</p>
+            </div>
+          ) : history.length > 0 ? (
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
@@ -33,7 +65,7 @@ export default function HistoryPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-700/50">
-                  {mockHistory.map((item) => (
+                  {history.map((item) => (
                     <tr key={item.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                       <td className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 whitespace-nowrap">
                         {new Date(item.created_at).toLocaleString()}
@@ -67,7 +99,7 @@ export default function HistoryPage() {
           ) : (
             <div className="flex flex-col items-center justify-center h-64 text-slate-400 dark:text-slate-500">
               <Search size={48} className="mb-4 opacity-50" />
-              <p>No history found.</p>
+              <p>No analyses yet. Analyze a profile to see it here.</p>
             </div>
           )}
         </div>

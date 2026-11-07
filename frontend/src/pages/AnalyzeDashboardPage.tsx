@@ -6,7 +6,7 @@ import { ResultSummaryCard } from '../components/result/ResultSummaryCard';
 import { UsernameAnalysisCard } from '../components/result/UsernameAnalysisCard';
 import { ModelConfidenceCard } from '../components/result/ModelConfidenceCard';
 import { DisclaimerNoteCard } from '../components/result/DisclaimerNoteCard';
-import { Search } from 'lucide-react';
+import { Search, AlertCircle } from 'lucide-react';
 import type { ProfileFormData, PredictionResult } from '../types';
 import { analyzeProfile } from '../services/predictionService';
 
@@ -15,15 +15,20 @@ export default function AnalyzeDashboardPage() {
   const [result, setResult] = useState<PredictionResult | null>(null);
   const [profileData, setProfileData] = useState<ProfileFormData | null>(null);
   const [currentUsername, setCurrentUsername] = useState<string>(''); // For live username stats
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const handleSubmit = async (data: ProfileFormData) => {
     setIsLoading(true);
+    setErrorMsg(null);
     setProfileData(data);
     try {
       const res = await analyzeProfile(data);
+      if (res.flagged_reasons.length === 0) {
+        res.flagged_reasons = [{ label: "No major risk indicators found", riskLevel: "Low" }];
+      }
       setResult(res);
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      setErrorMsg(error.message || "An unexpected error occurred.");
     } finally {
       setIsLoading(false);
     }
@@ -36,8 +41,16 @@ export default function AnalyzeDashboardPage() {
         subtitle="Enter the profile details below to detect whether the Instagram account is real or fake using our ML model."
         icon={<Search size={24} />}
       />
+
       
       <div className="p-8 space-y-8 max-w-[1400px]">
+        {errorMsg && (
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-300 p-4 rounded-xl flex items-center gap-3">
+            <AlertCircle size={20} />
+            <p>{errorMsg}</p>
+          </div>
+        )}
+
         {/* Top 2 Columns */}
         <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] xl:grid-cols-[1.5fr_1fr] gap-8">
           
